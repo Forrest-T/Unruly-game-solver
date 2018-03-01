@@ -133,9 +133,6 @@ bool Game::attempt(Move move) {
     return winnable;
 }
 
-Move *Game::inferNc(int n) {
-}
-
 void Game::print() {
     std::cout << std::endl;
     for (unsigned int r = 0; r < size; r++) {

@@ -40,6 +40,7 @@ class Game {
     /* Returns a sorted vector of valid moves to try
      * - Return: sorted vector of moves
      * - Caller is responsible for freeing vector
+     * [Currently Unused]
      */
     std::vector<Move*> *generateMoves();
 
@@ -58,10 +59,6 @@ class Game {
      */
     bool isWinnable();
     bool isWinnable(unsigned int row, unsigned int col);
-
-    /* helper method for inferN */
-    Move *inferNr(int n);
-    Move *inferNc(int n);
 
     bool attempt(Move m);
 

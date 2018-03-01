@@ -47,23 +47,24 @@ int main() {
 }
 
 bool solve(Game *game) {
-    bool foundMove = true;
     Move *m;
+    bool foundMove = true;
+    // loop until no moves are found
     while (foundMove) {
         foundMove = false;
-        // make direct inferences
+        // prioritize making direct inferences
         while ((m = game->inferDirectly())) {
             game->apply(*m);
             delete m;
             foundMove = true;
-            continue;
+            break;
         }
         if (!foundMove) {
             while ((m = game->infer1())) {
                 game->apply(*m);
                 delete m;
                 foundMove = true;
-                continue;
+                break;
             }
         }
         // if (!foundMove)
