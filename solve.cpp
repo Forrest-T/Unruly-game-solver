@@ -34,9 +34,8 @@ int main() {
     }
     cout << endl << "Direct Inference:" << endl;
     game->print();
-    // solve(game);
     cout << endl << "Solution Attempt:" << endl;
-    solve2(game);
+    solve(game);
     game->print();
     if (game->verify()) {
         cout << endl << "Solution:" << endl;
@@ -47,34 +46,6 @@ int main() {
 }
 
 bool solve(Game *game) {
-    std::vector<Move*> *moves = game->generateMoves();
-    for (int d = 1; d < 100 && !solved; d++) {
-        cout << "Depth " << d << "..." << endl;
-        for (auto &it : *moves) {
-            if (solved) break;
-            if (!tryMove(it, game, d)) {
-                Move opp(*it);
-                opp.color = (opp.color == B)? W:B;
-                // if opposite move fails, unwinnable
-                if (!tryMove(&opp, game, d)) {
-                    freevec(moves);
-                    return false;
-                }
-                // if opposite move was okay, use it
-                game->apply(opp);
-                // start over with the new information
-                freevec(moves);
-                moves = game->generateMoves();
-                d = 1;
-                break;
-            }
-        }
-    }
-    freevec(moves);
-    return true;
-}
-
-bool solve2(Game *game) {
     bool foundMove = true;
     Move *m;
     while (foundMove) {
@@ -99,73 +70,6 @@ bool solve2(Game *game) {
         //   infer 2 of color left...
     }
     return false;
-}
-
-bool tryMove(Move *m, Game *game, int depth) {
-    if (depth == 0 || solved) return true;
-    game->apply(*m);
-    stack<Move*> stk;
-    while (Move *m = game->inferDirectly()) {
-        game->apply(*m);
-        stk.push(m);
-    }
-    mvec *moves = game->generateMoves();
-    // return failure if the game is unwinnable
-    if (moves == NULL) {
-        while (!stk.empty()) {
-            game->undo(*(stk.top()));
-            delete stk.top();
-            stk.pop();
-        }
-        game->undo(*m);
-        return false;
-    }
-    if (moves->size() == 0 && game->verify()) {
-        solved = true;
-        game->print();
-    }
-    for (auto &it : *moves) {
-        // if a move is invalid, the game is unwinnable
-        if (!game->isValid(it->color, it->row, it->col)) {
-            while (!stk.empty()) {
-                game->undo(*(stk.top()));
-                delete stk.top();
-                stk.pop();
-            }
-            game->undo(*m);
-            freevec(moves);
-            return false;
-        }
-    }
-    // all moves were okay, so try each one
-    for (unsigned int it = 0; it < moves->size(); it++) {
-        if (!tryMove((*moves)[it], game, depth-1)) {
-            Move opp(*(*moves)[it]);
-            opp.color = (opp.color == B)? W:B;
-            // if one failed, check the opposite for an unwinnable game
-            if (!tryMove(&opp, game, depth-1)) {
-                while (!stk.empty()) {
-                    game->undo(*(stk.top()));
-                    delete stk.top();
-                    stk.pop();
-                }
-                game->undo(*m);
-                freevec(moves);
-                return false;
-            }
-            // remove the move that failed
-            delete (*moves)[it];
-            moves->erase(moves->begin()+(--it));
-        }
-    }
-    while (!stk.empty()) {
-        game->undo(*(stk.top()));
-        delete stk.top();
-        stk.pop();
-    }
-    game->undo(*m);
-    freevec(moves);
-    return true;
 }
 
 void freevec(mvec *v) {
@@ -195,7 +99,7 @@ Game *generateGame() {
     }
     Game *game = new Game(size, tiles);
 #ifdef DEBUG
-    game->checkrep();
+    assert(game->checkrep());
 #endif
     delete[] tiles;
     return game;

@@ -6,7 +6,6 @@
 Game *generateGame();
 
 bool solve(Game *game);
-bool solve2(Game *game);
 
 bool tryMove(Move *m, Game *game, int depth);
 
