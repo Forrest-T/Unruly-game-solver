@@ -34,12 +34,15 @@ int main() {
     }
     cout << endl << "Direct Inference:" << endl;
     game->print();
-    cout << endl << "Solution:" << endl;
+    // solve(game);
+    cout << endl << "Solution Attempt:" << endl;
+    solve2(game);
+    game->print();
     if (game->verify()) {
+        cout << endl << "Solution:" << endl;
         game->print();
         solved = true;
     }
-    // solve(game);
     delete game;
 }
 
