@@ -240,7 +240,7 @@ std::vector<Move*> *Game::generateMoves() {
                 moves->push_back(new Move(W, r, c, this));
         }
     }
-    std::sort(moves->begin(), moves->end());
+    // std::sort(moves->begin(), moves->end());
     return moves;
 }
 
