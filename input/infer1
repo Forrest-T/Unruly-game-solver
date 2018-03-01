@@ -1,0 +1,16 @@
+10
+bbwwb----b
+----------
+----------
+----------
+----------
+----------
+----------
+----------
+----------
+----------
+
+# it should infer that b cannot occur here:
+# bbwwbX--Xb
+# and set it to
+# bbwwbw--wb
