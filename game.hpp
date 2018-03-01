@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <vector>
 
-//#define DEBUG
-
 typedef enum tileState {B=0, W=1, E=2} Tile;
 class Move;
 

@@ -166,7 +166,7 @@ void Game::apply(const Move &m) {
     }
     numTiles++;
 #ifdef DEBUG
-    checkrep();
+    assert(checkrep());
 #endif
 }
 
@@ -186,45 +186,33 @@ void Game::undo(const Move &m) {
 }
 
 bool Game::checkrep() {
-#ifdef DEBUG
     // check number of each color per row/col
     for (unsigned int i = 0; i < size; i++) {
-        assert(rowB[i] <= size/2);
-        assert(colB[i] <= size/2);
-        assert(rowW[i] <= size/2);
-        assert(colW[i] <= size/2);
+        if (rowB[i] > size/2) return false;
+        if (colB[i] > size/2) return false;
+        if (rowW[i] > size/2) return false;
+        if (colW[i] > size/2) return false;
     }
-    unsigned int count = 0;
-#endif
+
     // check row count
+    unsigned int count = 0;
     for (unsigned int r = 0; r < size; r++) {
         unsigned int rowCountB = 0;
         unsigned int rowCountW = 0;
         for (unsigned int c = 0; c < size; c++) {
             if (board[r][c] == B) {
-#ifdef DEBUG
                 count++;
-#endif
                 rowCountB++;
             }
             if (board[r][c] == W) {
-#ifdef DEBUG
                 count++;
-#endif
                 rowCountW++;
             }
         }
-#ifdef DEBUG
-        assert(rowB[r] == rowCountB);
-        assert(rowW[r] == rowCountW);
-#else
         if (rowB[r] != rowCountB || rowW[r] != rowCountW) return false;
-#endif
     }
-#ifdef DEBUG
     // check total count
-    assert(count == numTiles);
-#endif
+    if (count != numTiles) return false;
     // check col count
     for (unsigned int c = 0; c < size; c++) {
         unsigned int colCountB = 0;
@@ -237,12 +225,7 @@ bool Game::checkrep() {
                 colCountW++;
             }
         }
-#ifdef DEBUG
-        assert(colB[c] == colCountB);
-        assert(colW[c] == colCountW);
-#else
         if (colB[c] != colCountB || colW[c] != colCountW) return false;
-#endif
     }
     return true;
 }
