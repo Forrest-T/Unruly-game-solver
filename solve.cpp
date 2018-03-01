@@ -26,7 +26,6 @@ int main() {
     Game *game = generateGame();
     cout << endl << "Current Game:" << endl;
     game->print();
-    solved = false;
     // infer what moves it can
     while (Move *m = game->inferDirectly()) {
         game->apply(*m);
@@ -34,8 +33,7 @@ int main() {
     }
     cout << endl << "Direct Inference:" << endl;
     game->print();
-    solve(game);
-    if (game->verify()) {
+    if (solve(game)) {
         cout << endl << "Solution:" << endl;
         game->print();
         solved = true;
@@ -49,7 +47,7 @@ int main() {
 bool solve(Game *game) {
     Move *m;
     bool foundMove = true;
-    // loop until no moves are found
+    // search until no moves are found
     while (foundMove) {
         foundMove = false;
         // prioritize making direct inferences
@@ -59,6 +57,7 @@ bool solve(Game *game) {
             foundMove = true;
             break;
         }
+        // otherwise, try to infer with recursion depth 1
         if (!foundMove) {
             while ((m = game->infer1())) {
                 game->apply(*m);
@@ -67,11 +66,8 @@ bool solve(Game *game) {
                 break;
             }
         }
-        // if (!foundMove)
-        //   infer 1 of color left
-        //   infer 2 of color left...
     }
-    return false;
+    return game->verify();
 }
 
 void freevec(mvec *v) {

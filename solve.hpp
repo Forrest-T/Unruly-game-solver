@@ -3,11 +3,13 @@
 
 #include "game.hpp"
 
+/* Handles input for setting up a game */
 Game *generateGame();
 
+/* Attempts to solve the game using known strategies
+ *  - Returns true on success, false on failure
+ */
 bool solve(Game *game);
-
-bool tryMove(Move *m, Game *game, int depth);
 
 // vector of Move pointers
 typedef std::vector<Move*> mvec;

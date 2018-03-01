@@ -60,6 +60,10 @@ class Game {
     bool isWinnable();
     bool isWinnable(unsigned int row, unsigned int col);
 
+    /* Attempts a move and determines using direct inference whether
+     * the game appears to be in a solvable state.
+     * - returns false if the game is unwinnable
+     */
     bool attempt(Move m);
 
     /* Used for debugging. Checks internal representation */
