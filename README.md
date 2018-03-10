@@ -1,6 +1,6 @@
 # Unruly-game-solver
 
-One of my good friends introduced me to a puzzle-solving app for Android called simply _Puzzles_. This is my attempt to create a time-efficient solver for the game, without resorting to brute-force.
+One of my good friends introduced me to a puzzle-solving app for Android called simply _Puzzles_. This is my attempt to create a time-efficient solver for one of the games _Unruly_, without resorting to brute-force.
 
 ## Brief overview of the game:
 * You are given a square board with an even number of rows/columns
