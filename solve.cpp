@@ -20,8 +20,6 @@ using std::string;
 using std::stack;
 using std::setw;
 
-static bool solved = false;
-
 int main() {
     Game *game = generateGame();
     cout << endl << "Current Game:" << endl;
@@ -35,12 +33,10 @@ int main() {
     game->print();
     if (solve(game)) {
         cout << endl << "Solution:" << endl;
-        game->print();
-        solved = true;
     } else {
         cout << endl << "Solution Attempt:" << endl;
-        game->print();
     }
+    game->print();
     delete game;
 }
 

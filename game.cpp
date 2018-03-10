@@ -79,9 +79,8 @@ Move *Game::inferDirectly() {
         for (unsigned int c = 0; c < size; c++) {
             if (board[r][c] != E)
                 continue;
-            if (!isValid(B, r, c) && isValid(W, r, c)) {
+            if (!isValid(B, r, c) && isValid(W, r, c))
                 return new Move(W, r, c, this);
-            }
             if (!isValid(W, r, c) && isValid(B, r, c))
                 return new Move(B, r, c, this);
         }
