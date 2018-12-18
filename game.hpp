@@ -81,7 +81,6 @@ class Move {
     Move(Tile color, unsigned int row, unsigned int col, Game *g);
     Move(const Move &o);
     ~Move();
-    bool operator=(const Move &o);
 };
  
 #endif  // GAME_H_

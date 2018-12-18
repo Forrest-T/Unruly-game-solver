@@ -308,6 +308,3 @@ Move::Move(Tile color, unsigned int row, unsigned int col, Game *g)
           : color(color), row(row), col(col), g(g) {}
 Move::Move(const Move &o): color(o.color), row(o.row), col(o.col), g(o.g) {}
 Move::~Move() {}
-bool Move::operator=(const Move &o) {
-    return color == o.color && row == o.row && col == o.col && g == o.g;
-}
