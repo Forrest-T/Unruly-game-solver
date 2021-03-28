@@ -6,7 +6,7 @@ all: solver
 solver: solve.o game.o
 	$(CXX) $(FLAGS) -o $@ $^
 
-solve.o: solve.cpp solve.hpp
+solve.o: solve.cpp solve.hpp game.o
 	$(CXX) $(FLAGS) -c -o $@ $<
 
 game.o: game.cpp game.hpp
