@@ -19,52 +19,51 @@ using std::string;
 using std::setw;
 
 int main() {
-    Game *game = generateGame();
+    Game game = generateGame();
     cout << endl << "Current Game:" << endl;
-    game->print();
+    game.print();
     // infer what moves it can
-    while (Move *m = game->inferDirectly()) {
-        game->apply(*m);
+    while (Move *m = game.inferDirectly()) {
+        game.apply(*m);
         delete m;
     }
     cout << endl << "Direct Inference:" << endl;
-    game->print();
+    game.print();
     if (solve(game)) {
         cout << endl << "Solution:" << endl;
     } else {
         cout << endl << "Solution Attempt:" << endl;
     }
-    game->print();
-    delete game;
+    game.print();
 }
 
-bool solve(Game *game) {
+bool solve(Game &game) {
     Move *m;
     bool foundMove = true;
     // search until no moves are found
     while (foundMove) {
         foundMove = false;
         // prioritize making direct inferences
-        while ((m = game->inferDirectly())) {
-            game->apply(*m);
+        while ((m = game.inferDirectly())) {
+            game.apply(*m);
             delete m;
             foundMove = true;
             break;
         }
         // otherwise, try to infer with recursion depth 1
         if (!foundMove) {
-            while ((m = game->infer1())) {
-                game->apply(*m);
+            while ((m = game.infer1())) {
+                game.apply(*m);
                 delete m;
                 foundMove = true;
                 break;
             }
         }
     }
-    return game->verify();
+    return game.verify();
 }
 
-Game *generateGame() {
+Game generateGame() {
     unsigned int size;
     cout << "Enter the board size: ";
     cin >> size;
@@ -83,7 +82,7 @@ Game *generateGame() {
         for (unsigned int j = 0; j < size; j++)
             tiles[size*i+j] = (line[j] == 'w')? W: (line[j] == 'b')? B: E;
     }
-    Game *game = new Game(size, tiles);
+    Game game(size, tiles);
 #ifdef DEBUG
     assert(game->checkrep());
 #endif
