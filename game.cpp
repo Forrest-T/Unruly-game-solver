@@ -1,7 +1,6 @@
 /* Copyright 2018, Forrest Timour */
 
-#include <assert.h>
-
+#include <cassert>
 #include <stack>
 #include <vector>
 #include <iostream>

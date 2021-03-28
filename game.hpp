@@ -1,7 +1,7 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 
 typedef enum tileState {B=0, W=1, E=2} Tile;
