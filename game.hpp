@@ -14,10 +14,10 @@ class Game {
     unsigned int size;
     Tile **board;
     // The the number of colored tiles in each row and col
-    unsigned int *rowB;
-    unsigned int *colB;
-    unsigned int *rowW;
-    unsigned int *colW;
+    std::vector<unsigned int> rowB;
+    std::vector<unsigned int> colB;
+    std::vector<unsigned int> rowW;
+    std::vector<unsigned int> colW;
 
     // Constructors/Destructor
     Game(unsigned int size, Tile state[]);

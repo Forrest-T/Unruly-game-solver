@@ -12,19 +12,11 @@
 
 /* Game class functions */
 
-Game::Game(unsigned int size, Tile state[]): size(size) {
+Game::Game(unsigned int size, Tile state[]):
+size(size), rowB(size, 0), colB(size, 0), rowW(size, 0), colW(size, 0)
+{
     numTiles = 0;
     Tile temp;
-    rowB = new unsigned int[size];
-    colB = new unsigned int[size];
-    rowW = new unsigned int[size];
-    colW = new unsigned int[size];
-    for (unsigned int i = 0; i < size; i++) {
-        rowB[i] = 0;
-        colB[i] = 0;
-        rowW[i] = 0;
-        colW[i] = 0;
-    }
     board = new Tile*[size];
     for (unsigned int r = 0; r < size; r++) {
         board[r] = new Tile[size];
@@ -43,30 +35,10 @@ Game::Game(unsigned int size, Tile state[]): size(size) {
         }
     }
 }
-Game::Game(const Game &o): numTiles(o.numTiles), size(o.size) {
-    rowB = new unsigned int[size];
-    colB = new unsigned int[size];
-    rowW = new unsigned int[size];
-    colW = new unsigned int[size];
-    board = new Tile*[size];
-    for (unsigned int i = 0; i < size; i++) {
-        board[i] = new Tile[size];
-        for (unsigned int j = 0; j < size; j++)
-            board[i][j] = o.board[i][j];
-        rowB[i] = o.rowB[i];
-        colB[i] = o.colB[i];
-        rowW[i] = o.rowW[i];
-        colW[i] = o.colW[i];
-    }
-}
 Game::~Game() {
     for (unsigned int i = 0; i < size; i++)
         delete[] board[i];
     delete[] board;
-    delete[] rowB;
-    delete[] colB;
-    delete[] rowW;
-    delete[] colW;
 }
 
 bool Game::verify() {
