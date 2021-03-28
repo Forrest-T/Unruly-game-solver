@@ -24,8 +24,7 @@ class Game {
     Game(const Game &other);
     ~Game();
 
-    /* Prints the current board state to stdout */
-    void print();
+    friend std::ostream & operator<<(std::ostream &os, Game const &game);
 
     /* Verifies that the game has been solved */
     bool verify();
@@ -69,6 +68,8 @@ class Game {
     /* Used for debugging. Checks internal representation */
     bool checkrep();
 };
+
+std::ostream & operator<<(std::ostream &, Game const &);
 
 class Move {
   public:

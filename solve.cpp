@@ -21,20 +21,20 @@ using std::setw;
 int main() {
     Game game = generateGame();
     cout << endl << "Current Game:" << endl;
-    game.print();
+    std::cout << game;
     // infer what moves it can
     while (Move *m = game.inferDirectly()) {
         game.apply(*m);
         delete m;
     }
     cout << endl << "Direct Inference:" << endl;
-    game.print();
+    std::cout << game;
     if (solve(game)) {
         cout << endl << "Solution:" << endl;
     } else {
         cout << endl << "Solution Attempt:" << endl;
     }
-    game.print();
+    std::cout << game;
 }
 
 bool solve(Game &game) {

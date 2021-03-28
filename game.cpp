@@ -104,20 +104,20 @@ bool Game::attempt(Move move) {
     return winnable;
 }
 
-void Game::print() {
-    std::cout << std::endl;
-    for (unsigned int r = 0; r < size; r++) {
-        std::cout << " ";
-        for (unsigned int c = 0; c < size; c++) {
-            if (board[r][c] == B)
-                std::cout << "b";
-            else if (board[r][c] == W)
-                std::cout << "w";
+std::ostream & operator<<(std::ostream &os, Game const &game) {
+    for (unsigned int r = 0; r < game.size; r++) {
+        os << " ";
+        for (unsigned int c = 0; c < game.size; c++) {
+            if (game.board[r][c] == B)
+                os << "b";
+            else if (game.board[r][c] == W)
+                os << "w";
             else
-                std::cout << "-";
+                os << "-";
         }
-        std::cout << std::endl;
+        os << std::endl;
     }
+    return os;
 }
 
 void Game::apply(const Move &m) {
