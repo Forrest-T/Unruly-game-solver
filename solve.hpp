@@ -11,8 +11,4 @@ Game *generateGame();
  */
 bool solve(Game *game);
 
-// vector of Move pointers
-typedef std::vector<Move*> mvec;
-void freevec(mvec *v);
-
 #endif  // SOLVE_H_

@@ -7,7 +7,6 @@
 #include <cstdlib>
 #include <vector>
 #include <string>
-#include <stack>
 
 #include "game.hpp"
 #include "solve.hpp"
@@ -17,7 +16,6 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::string;
-using std::stack;
 using std::setw;
 
 int main() {
@@ -64,12 +62,6 @@ bool solve(Game *game) {
         }
     }
     return game->verify();
-}
-
-void freevec(mvec *v) {
-    for (auto &m : *v)
-        delete m;
-    delete v;
 }
 
 Game *generateGame() {
