@@ -1,0 +1,28 @@
+define printTile
+if $arg0 == 0
+printf "b"  
+end         
+if $arg0 == 1
+printf "w"  
+end         
+if $arg0 == 2
+printf "-"  
+end         
+end          
+
+define printGame
+set $game = $arg0
+set $board = (Tile**)$game->board
+set $size = $game->size
+set $r = 0
+while $r < $size
+set $c = 0
+while $c < $size
+printTile $board[$r][$c]
+printf " "
+set $c = $c + 1
+end
+printf "\n"
+set $r = $r + 1
+end
+end
