@@ -1,5 +1,10 @@
 CXX = g++
-FLAGS = -O3 -g -Wextra -Wall --short-enums -std=c++17
+FLAGS = -Wextra -Wall --short-enums -std=c++17
+ifdef DEBUG
+	FLAGS += -DDEBUG -g
+else
+	FLAGS += -O3
+endif
 
 all: solver
 

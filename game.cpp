@@ -12,9 +12,8 @@
 /* Game class functions */
 
 Game::Game(unsigned int size, Tile state[]):
-size(size), rowB(size, 0), colB(size, 0), rowW(size, 0), colW(size, 0)
+numTiles(0), size(size), rowB(size, 0), colB(size, 0), rowW(size, 0), colW(size, 0)
 {
-    numTiles = 0;
     Tile temp;
     board = new Tile*[size];
     for (unsigned int r = 0; r < size; r++) {
@@ -40,67 +39,8 @@ Game::~Game() {
     delete[] board;
 }
 
-bool Game::verify() {
+bool Game::verifySolved() {
     return numTiles == size*size && checkrep();
-}
-
-Move *Game::inferDirectly() {
-    // when there is only one valid move
-    for (unsigned int r = 0; r < size; r++) {
-        for (unsigned int c = 0; c < size; c++) {
-            if (board[r][c] != E)
-                continue;
-            if (!isValid(B, r, c) && isValid(W, r, c))
-                return new Move(W, r, c, this);
-            if (!isValid(W, r, c) && isValid(B, r, c))
-                return new Move(B, r, c, this);
-        }
-    }
-    return NULL;
-}
-
-Move *Game::infer1() {
-    // try each position, looking for ones that don't work
-    for (unsigned int r = 0; r < size; r++) {
-        if (rowB[r] == size/2-1) {
-            for (unsigned int c = 0; c < size; c++)
-                if (board[r][c] == E && !attempt(Move(B, r, c, this)))
-                    return new Move(W, r, c, this);
-        } else if (rowW[r] == size/2-1) {
-            for (unsigned int c = 0; c < size; c++)
-                if (board[r][c] == E && !attempt(Move(W, r, c, this)))
-                    return new Move(B, r, c, this);
-        }
-    }
-    for (unsigned int c = 0; c < size; c++) {
-        if (colB[c] == size/2-1) {
-            for (unsigned int r = 0; r < size; r++)
-                if (board[r][c] == E && !attempt(Move(B, r, c, this)))
-                    return new Move(W, r, c, this);
-        } else if (colW[c] == size/2-1) {
-            for (unsigned int r = 0; r < size; r++)
-                if (board[r][c] == E && !attempt(Move(W, r, c, this)))
-                    return new Move(B, r, c, this);
-        }
-    }
-    return NULL;
-}
-
-bool Game::attempt(Move move) {
-    apply(move);
-    std::stack<Move*> stk;
-    while (Move *m = inferDirectly()) {
-        apply(*m);
-        stk.push(m);
-    }
-    bool winnable = isWinnable();
-    while (!stk.empty()) {
-        undo(*(stk.top()));
-        delete stk.top();
-        stk.pop();
-    }
-    undo(move);
-    return winnable;
 }
 
 std::ostream & operator<<(std::ostream &os, Game const &game) {
@@ -120,35 +60,21 @@ std::ostream & operator<<(std::ostream &os, Game const &game) {
 }
 
 void Game::apply(const Move &m) {
-#ifdef DEBUG
-    assert(isValid(m.color, m.row, m.col));
-#endif
     board[m.row][m.col] = m.color;
-    if (m.color == B) {
-        rowB[m.row]++;
-        colB[m.col]++;
-    } else {
-        rowW[m.row]++;
-        colW[m.col]++;
-    }
+    auto &row = (m.color == B)? rowB : rowW;
+    auto &col = (m.color == B)? colB : colW;
+    row[m.row]++;
+    col[m.col]++;
     numTiles++;
-#ifdef DEBUG
-    assert(checkrep());
-#endif
 }
 
 void Game::undo(const Move &m) {
-#ifdef DEBUG
     assert(m.color == board[m.row][m.col]);
-#endif
+    auto &row = (m.color == B)? rowB : rowW;
+    auto &col = (m.color == B)? colB : colW;
     board[m.row][m.col] = E;
-    if (m.color == B) {
-        rowB[m.row]--;
-        colB[m.col]--;
-    } else {
-        rowW[m.row]--;
-        colW[m.col]--;
-    }
+    row[m.row]--;
+    col[m.col]--;
     numTiles--;
 }
 
@@ -197,85 +123,60 @@ bool Game::checkrep() {
     return true;
 }
 
-std::vector<Move*> *Game::generateMoves() {
-    std::vector<Move*> *moves = new std::vector<Move*>();
+std::vector<Move> *Game::generateMoves() {
+    std::vector<Move> *moves = new std::vector<Move>();
     moves->reserve(2*(size*size-numTiles));
     for (unsigned int r = 0; r < size; r++) {
         for (unsigned int c = 0; c < size; c++) {
             if (board[r][c] != E)
                 continue;
             if (isValid(B, r, c))
-                moves->push_back(new Move(B, r, c, this));
+                moves->push_back(Move(B, r, c));
             if (isValid(W, r, c))
-                moves->push_back(new Move(W, r, c, this));
+                moves->push_back(Move(W, r, c));
         }
     }
-    // std::sort(moves->begin(), moves->end());
     return moves;
 }
 
 bool Game::isWinnable() {
-    for (unsigned int r = 0; r < size; r++)
+    for (unsigned int i = 0; i < size; i++)
+        if (rowB[i] > size/2 || rowW[i] > size/2 ||
+            colB[i] > size/2 || colW[i] > size/2 ) { return false; }
+    for (unsigned int r = 0; r < size; r++) {
         for (unsigned int c = 0; c < size; c++)
             if (board[r][c] == E && !isValid(W, r, c) && !isValid(B, r, c))
                 return false;
-    return true;
-}
-
-bool Game::isWinnable(unsigned int row, unsigned int col) {
-    for (unsigned int r = 0; r < size; r++)
-        if (board[r][col] == E && !isValid(W, r, col) && !isValid(B, r, col))
-            return false;
-    for (unsigned int c = 0; c < size; c++)
-        if (board[row][c] == E && !isValid(W, row, c) && !isValid(B, row, c))
-            return false;
+    }
     return true;
 }
 
 bool Game::isValid(Tile color, unsigned int r, unsigned int c) {
+    if (r >= size || c >= size || color == E) return false;
+    auto const &row = (color == B)? rowB : rowW;
+    auto const &col = (color == B)? colB : colW;
+    // check for row and col saturation
+    if (row[r] >= size/2 || col[c] >= size/2) return false;
+    // check for triple in row
     unsigned int count = 1;
-    if (color == B) {
-        // check for row and col saturation
-        if (rowB[r] == size/2 || colB[c] == size/2)
-            return false;
-        count = 1;  // check for triple in row
-        if (r > 0 && board[r-1][c] == B)
-            count += (r > 1 && board[r-2][c] == B)?2:1;
-        if (r < size-1 && board[r+1][c] == B)
-            count += (r < size-2 && board[r+2][c] == B)?2:1;
-        if (count > 2)
-            return false;
-        count = 1;  // check for triple in col
-        if (c > 0 && board[r][c-1] == B)
-            count += (c > 1 && board[r][c-2] == B)?2:1;
-        if (c < size-1 && board[r][c+1] == B)
-            count += (c < size-2 && board[r][c+2] == B)?2:1;
-        return count <= 2;
-    } else if (color == W) {
-        // check for row and col saturation
-        if (rowW[r] == size/2 || colW[c] == size/2)
-            return false;
-        count = 1;  // check for triple in row
-        if (r > 0 && board[r-1][c] == W)
-            count += (r > 1 && board[r-2][c] == W)?2:1;
-        if (r < size-1 && board[r+1][c] == W)
-            count += (r < size-2 && board[r+2][c] == W)?2:1;
-        if (count > 2)
-            return false;
-        count = 1;  // check for triple in col
-        if (c > 0 && board[r][c-1] == W)
-            count += (c > 1 && board[r][c-2] == W)?2:1;
-        if (c < size-1 && board[r][c+1] == W)
-            count += (c < size-2 && board[r][c+2] == W)?2:1;
-        return count <= 2;
-    }
-    return false;
+    if (r > 0 && board[r-1][c] == color)
+        count += (r > 1 && board[r-2][c] == color)? 2 : 1;
+    if (r < size-1 && board[r+1][c] == color)
+        count += (r < size-2 && board[r+2][c] == color)? 2 : 1;
+    if (count > 2) return false;
+    // check for triple in col
+    count = 1;  
+    if (c > 0 && board[r][c-1] == color)
+        count += (c > 1 && board[r][c-2] == color)? 2 : 1;
+    if (c < size-1 && board[r][c+1] == color)
+        count += (c < size-2 && board[r][c+2] == color)? 2 : 1;
+    return count <= 2;
 }
 
 /* Move class functions */
 
 // Constructors/Destructor/Operators
-Move::Move(Tile color, unsigned int row, unsigned int col, Game *g)
-          : color(color), row(row), col(col), g(g) {}
-Move::Move(const Move &o): color(o.color), row(o.row), col(o.col), g(o.g) {}
+Move::Move(Tile color, unsigned int row, unsigned int col)
+    : color(color), row(row), col(col) {}
+Move::Move(const Move &o): color(o.color), row(o.row), col(o.col) {}
 Move::~Move() {}

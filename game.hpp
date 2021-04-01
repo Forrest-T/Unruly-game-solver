@@ -2,6 +2,7 @@
 #define GAME_H_
 
 #include <cstdint>
+#include <optional>
 #include <vector>
 
 typedef enum tileState {B=0, W=1, E=2} Tile;
@@ -27,21 +28,14 @@ class Game {
     friend std::ostream & operator<<(std::ostream &os, Game const &game);
 
     /* Verifies that the game has been solved */
-    bool verify();
-
-    /* Attempts to infer a single tile from the board's
-     * current position, using a deterministic set of rules.
-     * - Return: a Move pointer that must be freed, or NULL
-     */
-    Move *inferDirectly();
-    Move *infer1();
+    bool verifySolved();
 
     /* Returns a sorted vector of valid moves to try
      * - Return: sorted vector of moves
      * - Caller is responsible for freeing vector
      * [Currently Unused]
      */
-    std::vector<Move*> *generateMoves();
+    std::vector<Move> *generateMoves();
 
     /* Checks if a move is valid */
     bool isValid(Tile color, unsigned int row, unsigned int col);
@@ -52,21 +46,13 @@ class Game {
     /* Undies an applied move to the board. */
     void undo(const Move &m);
 
-  private:
+    /* Used for debugging. Checks internal representation */
+    bool checkrep();
+
     /* Ensures that every non-empty tile has at least one valid move
      *  - overloaded if only one row/column needs to be checked
      */
     bool isWinnable();
-    bool isWinnable(unsigned int row, unsigned int col);
-
-    /* Attempts a move and determines using direct inference whether
-     * the game appears to be in a solvable state.
-     * - returns false if the game is unwinnable
-     */
-    bool attempt(Move m);
-
-    /* Used for debugging. Checks internal representation */
-    bool checkrep();
 };
 
 std::ostream & operator<<(std::ostream &, Game const &);
@@ -77,9 +63,8 @@ class Move {
     Tile color;
     unsigned int row;
     unsigned int col;
-    Game *g;
 
-    Move(Tile color, unsigned int row, unsigned int col, Game *g);
+    Move(Tile color, unsigned int row, unsigned int col);
     Move(const Move &o);
     ~Move();
 };
