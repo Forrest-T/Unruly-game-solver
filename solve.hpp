@@ -4,7 +4,7 @@
 #include <optional>
 #include "game.hpp"
 
-/* Handles input for setting up a game */
+/* Handles user input for setting up a game */
 Game generateGame();
 
 /* Attempts to solve the game using known strategies
@@ -12,11 +12,9 @@ Game generateGame();
  */
 bool solve(Game &game);
 
-/* Attempt to find a (maybe) valid move that can be inferred from the board state
- *  - optionally allows generating invalid moves
- */
+/* Attempt to infer a move by elimination, optionally allowing invalid moves */
 std::optional<Move> directInference(Game &, bool allowInvalidMoves);
-/*  */
-std::optional<Move> recursiveInference(Game &, unsigned int maxDepth);
+/* Attempt to infer a move by speculatively playing ahead */
+std::optional<Move> speculativeInference(Game &);
 
 #endif  // SOLVE_H_

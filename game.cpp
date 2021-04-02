@@ -140,13 +140,47 @@ std::vector<Move> *Game::generateMoves() {
 }
 
 bool Game::isWinnable() {
+    // check for rows/cols with too many tiles of a color
     for (unsigned int i = 0; i < size; i++)
         if (rowB[i] > size/2 || rowW[i] > size/2 ||
             colB[i] > size/2 || colW[i] > size/2 ) { return false; }
+    // check for empty tiles with no valid moves
     for (unsigned int r = 0; r < size; r++) {
-        for (unsigned int c = 0; c < size; c++)
+        for (unsigned int c = 0; c < size; c++) {
             if (board[r][c] == E && !isValid(W, r, c) && !isValid(B, r, c))
                 return false;
+        }
+    }
+    // check for three in a row/col
+    for (unsigned int i = 0; i < size; i++) {
+        unsigned count[] = { 0, 0 }; // rowCount, colCount
+        Tile t[] = { E, E };
+        for (unsigned int j = 0; j < size; j++) {
+            if (auto color = board[i][j]; color == E) {
+                t[0] = E;
+                count[0] = 0;
+            } else {
+                if (t[0] == color) {
+                    count[0]++;
+                    if (count[0] > 2) return false;
+                } else {
+                    t[0] = color;
+                    count[0] = 1;
+                };
+            }
+            if (auto color = board[j][i]; color == E) {
+                t[1] = E;
+                count[1] = 0;
+            } else {
+                if (t[1] == color) {
+                    count[1]++;
+                    if (count[1] > 2) return false;
+                } else {
+                    t[1] = color;
+                    count[1] = 1;
+                }
+            }
+        }
     }
     return true;
 }

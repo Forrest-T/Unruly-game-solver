@@ -31,7 +31,6 @@ int main() {
 bool
 solve(Game &game) {
     bool foundMove = true;
-    // search until no moves are found
     while (foundMove) {
         foundMove = false;
         // prioritize making direct inferences
@@ -39,12 +38,10 @@ solve(Game &game) {
             game.apply(m.value());
             foundMove = true;
         }
-        if (foundMove) continue;
-        // otherwise, try to infer with recursion depth 1
-        while (auto m = recursiveInference(game, 1)) {
+        // if no moves can be inferred directly, attempt more expensive search
+        if (auto m = speculativeInference(game)) {
             game.apply(m.value());
             foundMove = true;
-            break;
         }
     }
     return game.verifySolved();
@@ -61,12 +58,11 @@ directInference(Game &game, bool allowInvalidMoves) {
                 return Move(B, r, c);
         }
     }
-    return std::nullopt;
+    return {};
 }
 
 std::optional<Move>
-recursiveInference(Game &game, unsigned int maxDepth) {
-    if (!maxDepth) return std::nullopt;
+speculativeInference(Game &game) {
     for (unsigned int r = 0; r < game.size; r++) {
         for (unsigned int c = 0; c < game.size; c++) {
             if (game.board[r][c] != E) continue;
@@ -91,7 +87,7 @@ recursiveInference(Game &game, unsigned int maxDepth) {
             }
         }
     }
-    return std::nullopt;
+    return {};
 }
 
 Game
@@ -115,9 +111,7 @@ generateGame() {
             tiles[size*i+j] = (line[j] == 'w')? W: (line[j] == 'b')? B: E;
     }
     Game game(size, tiles);
-#ifdef DEBUG
     assert(game.checkrep());
-#endif
     delete[] tiles;
     return game;
 }

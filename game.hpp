@@ -46,7 +46,7 @@ class Game {
     /* Undies an applied move to the board. */
     void undo(const Move &m);
 
-    /* Used for debugging. Checks internal representation */
+    /* Verify internal representation */
     bool checkrep();
 
     /* Ensures that every non-empty tile has at least one valid move
